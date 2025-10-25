@@ -3,7 +3,10 @@ import cors from "cors";
 import pkg from "pg";
 const { Pool } = pkg;
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: "postgres://finance_t87n_user:vSVGNJkwqRDMJYjMsdvxmeuZnQ0K9iJN@dpg-d3ulvere5dus739popng-a:5432/finance_t87n",
+  ssl: { rejectUnauthorized: false }
+});
 
 const app = express();
 app.use(cors({ origin: "*" }));
