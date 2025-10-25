@@ -12,6 +12,24 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
+// TABLO OLUŞTUR (başlangıçta)
+const createTableIfNotExists = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+    `);
+    console.log("Tablo hazır ✅");
+  } catch (err) {
+    console.error("Tablo oluşturulamadı ❌", err);
+  }
+};
+
+// Başlangıçta tabloyu oluştur
+createTableIfNotExists();
+
 // CREATE
 app.post("/users", async (req, res) => {
   const { name } = req.body;
@@ -41,4 +59,6 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 app.get("/", (req, res) => res.send("CRUD API çalışıyor 🚀"));
-app.listen(3000, () => console.log("API port 3000'de çalışıyor"));
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`API port ${port}
