@@ -1,26 +1,41 @@
 import express from "express";
 import cors from "cors";
+import pkg from "pg";
+const { Pool } = pkg;
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const app = express();
-
-// CORS middleware ekleyin
-app.use(cors({
-  origin: ['http://localhost:8081', 'http://localhost:8082', 'exp://192.168.1.36:8081', 'exp://192.168.1.36:8082'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-app.use(cors({ origin: true }));
-
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API çalışıyor 🚀");
+// CREATE
+app.post("/users", async (req, res) => {
+  const { name } = req.body;
+  await pool.query("INSERT INTO users(name) VALUES($1)", [name]);
+  res.send("Kullanıcı eklendi ✅");
 });
 
-app.post("/echo", (req, res) => {
-  res.json({ received: req.body });
+// READ
+app.get("/users", async (req, res) => {
+  const result = await pool.query("SELECT * FROM users");
+  res.json(result.rows);
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Sunucu çalışıyor: ${port}`));
+// UPDATE
+app.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  await pool.query("UPDATE users SET name=$1 WHERE id=$2", [name, id]);
+  res.send("Kullanıcı güncellendi 🔄");
+});
+
+// DELETE
+app.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM users WHERE id=$1", [id]);
+  res.send("Kullanıcı silindi ❌");
+});
+
+app.get("/", (req, res) => res.send("CRUD API çalışıyor 🚀"));
+app.listen(3000, () => console.log("API port 3000'de çalışıyor"));
