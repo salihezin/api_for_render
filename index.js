@@ -30,6 +30,7 @@ const createTableIfNotExists = async () => {
         completed BOOLEAN DEFAULT FALSE
       )
     `)
+    console.log("Görevler tablosu hazır ✅");
   } catch (err) {
     console.error("Tablo oluşturulamadı ❌", err);
   }
@@ -130,4 +131,4 @@ app.delete("/tasks/:id", async (req, res) => {
 app.get("/", (req, res) => res.send("CRUD API çalışıyor 🚀"));
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`API port ${port}
+app.listen(port, () => console.log(`API port ${port} üzerinde çalışıyor 🚀`));
